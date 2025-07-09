@@ -57,7 +57,7 @@ stages:
             libsystemd-dev \
             build-essential \
             python3-dev
-        displayName: 'Install System Packages
+        displayName: 'Install System Packages'
 
       - script: |
           python3 -m venv .venv
