@@ -84,7 +84,7 @@ stages:
 
           pip install -r todo/requirements.txt
           cd todo
-          python manage.py test todo.tests.test_app
+          python manage.py test
         displayName: 'Install Deps & Run Unit Tests'
 
 
