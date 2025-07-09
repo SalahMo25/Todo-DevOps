@@ -34,11 +34,11 @@ stages:
             versionSpec: '$(PYTHON_VERSION)'
             addToPath: true
         - script: |
-              sudo apt install python3-pip
-              python3.9 -m venv .venv
-              source .venv/bin/active
-              pip install flake8
-              flake8 todo/todo/ todo/tests/
+            python -m venv .venv
+            source .venv/bin/activate
+            pip install --upgrade pip
+            pip install flake8
+            flake8 todo/todo/ todo/tests/
           displayName: 'Lint Django app with flake8'
 
 
