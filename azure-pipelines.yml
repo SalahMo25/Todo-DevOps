@@ -83,7 +83,7 @@ stages:
           sed -i '/dbus-python/d' todo/requirements.txt
 
           pip install -r todo/requirements.txt
-          python manage.py test todo.tests.test_app
+          python todo/manage.py test todo.tests.test_app
         displayName: 'Install Deps & Run Unit Tests'
 
 
