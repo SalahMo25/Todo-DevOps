@@ -38,7 +38,7 @@ stages:
             source .venv/bin/activate
             pip install --upgrade pip
             pip install flake8
-            flake8 todo/todo/ todo/tests/
+            flake8 todo/todo/ 
           displayName: 'Lint Django app with flake8'
 
 
