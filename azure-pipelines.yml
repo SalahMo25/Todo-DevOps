@@ -91,6 +91,7 @@ stages:
 
 - stage: CD
   displayName: CD stage
+  dependsOn: CI
   jobs:
 
   - deployment: DeployToEks
