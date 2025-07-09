@@ -8,7 +8,7 @@ pool:
     name: my-agent
 
 parameters:
-    - name: enviroment
+    - name: environment
       type: string
       default: dev
       values:
@@ -39,7 +39,7 @@ stages:
 
   - deployment: DeployToEks
     displayName: deploy to eks
-    enviroment: ${{ parameters.enviroment }}
+    enviroment: ${{ parameters.environment }}
     strategy:
         runOnce:
             deploy:
