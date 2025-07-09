@@ -60,6 +60,7 @@ stages:
                 libxml2-dev \
                 libxslt1-dev \
                 zlib1g-dev
+
               python3 -m venv .venv
               source .venv/bin/activate
               pip install --upgrade pip
