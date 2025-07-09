@@ -9,13 +9,13 @@ def todo(request):
     if request.method == 'POST':
         form = TodoForm(request.POST)
         if form.is_valid():
-           form.save()
-           return redirect('todo')
-    
-    return render(request, 'index.html', {'form': TodoForm , 'data': data})
+         form.save()
+         return redirect('todo')
+
+    return render(request, 'index.html', {'form': TodoForm, 'data': data})
 
 
-def remove(request , id):
-    text = Todo.objects.get(id = id)
+def remove(request, id):
+    text = Todo.objects.get(id=id)
     text.delete()
     return redirect('todo')
