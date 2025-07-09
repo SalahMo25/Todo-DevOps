@@ -7,10 +7,10 @@ from .models import Todo
 def todo(request):
     data = Todo.objects.order_by('-date')
     if request.method == 'POST':
-       form = TodoForm(request.POST)
-       if form.is_valid():
-        form.save()
-        return redirect('todo')
+        form = TodoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('todo')
 
     return render(request, 'index.html', {'form': TodoForm, 'data': data})
 
