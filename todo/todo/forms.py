@@ -11,4 +11,3 @@ class TodoForm(forms.ModelForm):
         for field_name, field in self.fields.items():
             field.widget.attrs.update({'class': 'form-control'})
             field.widget.attrs.update({'placeholder': 'Enter Task..'})
-    
