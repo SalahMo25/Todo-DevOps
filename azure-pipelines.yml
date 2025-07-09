@@ -48,27 +48,27 @@ stages:
     steps:
       - checkout: self
 
-     - script: |
-        sudo apt-get update
-        sudo apt-get install -y \
-          python3-dbus \
-          libdbus-1-dev \
-          libdbus-glib-1-dev \
-          libsystemd-dev \
-          pkg-config \
-          build-essential \
-          python3-dev \
-          gcc
+      - script: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            python3-dbus \
+            libdbus-1-dev \
+            libdbus-glib-1-dev \
+            libsystemd-dev \
+            pkg-config \
+            build-essential \
+            python3-dev \
+            gcc
 
-        python3 -m venv .venv
-        source .venv/bin/activate
-        pip install --upgrade pip
+          python3 -m venv .venv
+          source .venv/bin/activate
+          pip install --upgrade pip
 
-        sed -i '/dbus-python/d' todo/requirements.txt
+          sed -i '/dbus-python/d' todo/requirements.txt
 
-        pip install -r todo/requirements.txt
-        python manage.py test todo.tests.test_app
-      displayName: 'Install Deps & Run Unit Tests'
+          pip install -r todo/requirements.txt
+          python manage.py test todo.tests.test_app
+        displayName: 'Install Deps & Run Unit Tests'
 
 
 
