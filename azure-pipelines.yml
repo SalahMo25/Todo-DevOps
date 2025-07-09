@@ -39,7 +39,7 @@ stages:
 
   - deployment: DeployToEks
     displayName: deploy to eks
-    enviroment: ${{ parameters.environment }}
+    environment: ${{ parameters.environment }}
     strategy:
         runOnce:
             deploy:
