@@ -49,7 +49,8 @@ stages:
         - checkout: self
         - script: |
               sudo apt-get update
-             sudo apt-get install -y \
+             sudo apt-get install -y libsystemd-dev \
+                pkg-config \
                 build-essential \
                 gcc \
                 libpq-dev \
@@ -70,9 +71,8 @@ stages:
                 qtbase5-dev \
                 qtchooser \
                 qt5-qmake \
-                qtbase5-dev-tools \
-                pkg-config \
-                libsystemd-dev
+                qtbase5-dev-tools               
+                
 
               python3 -m venv .venv
               source .venv/bin/activate
