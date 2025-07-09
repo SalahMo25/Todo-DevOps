@@ -55,10 +55,26 @@ stages:
             libdbus-1-dev \
             libdbus-glib-1-dev \
             libsystemd-dev \
+            libcups2-dev \
             pkg-config \
             build-essential \
             python3-dev \
-            gcc
+            gcc \
+            libpq-dev \
+            libxml2-dev \
+            libxslt1-dev \
+            zlib1g-dev \
+            libjpeg-dev \
+            libfreetype6-dev \
+            liblcms2-dev \
+            libopenjp2-7-dev \
+            libtiff-dev \
+            tk-dev \
+            tcl-dev \
+            qtbase5-dev \
+            qtchooser \
+            qt5-qmake \
+            qtbase5-dev-tools
 
           python3 -m venv .venv
           source .venv/bin/activate
