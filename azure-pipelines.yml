@@ -46,40 +46,47 @@ stages:
     dependsOn: Lint
     displayName: Testing
     steps:
-        - checkout: self
-        - script: |
-              sudo apt-get update
-             sudo apt-get install -y pkg-config \
-                libsystemd-dev \
-                python3-dev \
-                build-essential \
-                gcc \
-                libpq-dev \
-                libxml2-dev \
-                libxslt1-dev \
-                zlib1g-dev \
-                libjpeg-dev \
-                libfreetype6-dev \
-                liblcms2-dev \
-                libopenjp2-7-dev \
-                libtiff-dev \
-                tk-dev \
-                tcl-dev \
-                libdbus-1-dev \
-                libdbus-glib-1-dev \
-                libcups2-dev \
-                qtbase5-dev \
-                qtchooser \
-                qt5-qmake \
-                qtbase5-dev-tools               
-                
+      - checkout: self
 
-              python3 -m venv .venv
-              source .venv/bin/activate
-              pip install --upgrade pip
-              pip install -r todo/requirements.txt
-              python manage.py test todo.tests.test_app
-          displayName: 'Unit Test My App'
+      - script: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            python3-venv \
+            python3-pip \
+            pkg-config \
+            libsystemd-dev \
+            python3-dev \
+            build-essential \
+            gcc \
+            libpq-dev \
+            libxml2-dev \
+            libxslt1-dev \
+            zlib1g-dev \
+            libjpeg-dev \
+            libfreetype6-dev \
+            liblcms2-dev \
+            libopenjp2-7-dev \
+            libtiff-dev \
+            tk-dev \
+            tcl-dev \
+            libdbus-1-dev \
+            libdbus-glib-1-dev \
+            libcups2-dev \
+            qtbase5-dev \
+            qtchooser \
+            qt5-qmake \
+            qtbase5-dev-tools
+
+        displayName: 'Install System Dependencies'
+
+      - script: |
+          python3 -m venv .venv
+          source .venv/bin/activate
+          python -m pip install --upgrade pip
+          pip install -r todo/requirements.txt
+          python manage.py test todo.tests.test_app
+        displayName: 'Unit Test My App'
+
 
 
 - stage: CD
