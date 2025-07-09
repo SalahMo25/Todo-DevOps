@@ -1,1 +1,47 @@
 # Python Django TODO Project
+trigger:
+  branches:
+    include:
+        - main
+
+pool:
+    name: my-agent
+
+parameters:
+    - name: enviroment
+      type: string
+      default: dev
+      values:
+        - dev
+        - stagging
+        - prod
+
+stages:
+
+- stage: CI
+  displayName: CI stage
+  jobs:
+
+  - job: Lint
+    displyName: Linting
+    steps:
+        - checkout: self
+
+  - job: test
+    displyName: Testing
+    steps:
+        - checkout: self
+
+
+- stage: CD
+  displayName: CD stage
+  jobs:
+
+  - deployment: DeployToEks
+    displayName: deploy to eks
+    enviroment: ${{ parameters.enviroment }}
+    strategy:
+        runOnce:
+            deploy:
+                steps:
+                - checkout: self
