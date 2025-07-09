@@ -7,6 +7,9 @@ trigger:
 pool:
     name: my-agent
 
+variables:
+  PYTHON_VERSION: '3.9'
+
 parameters:
     - name: environment
       type: string
@@ -26,11 +29,30 @@ stages:
     displayName: Linting
     steps:
         - checkout: self
+        - task: UsePythonVersion@0
+          inputs:
+            versionSpec: '$(PYTHON_VERSION)'
+            addToPath: true
+        - script: |
+              sudo apt install python3-pip
+              python3.9 -m venv .venv
+              source .venv/bin/active
+              pip install flake8
+              flake8 todo/todo/ todo/tests/
+          displayName: 'Lint Django app with flake8'
+
 
   - job: test
+    dependsOn: Lint
     displayName: Testing
     steps:
         - checkout: self
+        - script: |
+              python3.9 -m venv .venv
+              source .venv/bin/active
+              pip install -r todo/requirements.txt
+              python manage.py test todo.tests.test_app.py
+          displayName: 'Unit Test My App'
 
 
 - stage: CD
