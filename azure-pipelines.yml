@@ -104,7 +104,7 @@ stages:
           containerRegistry: $(dockerRegistryServiceConection)
           repository: $(dockerHubNamespace)/devops
           command: 'buildAndPush'
-          Dockerfile: 'todo /Dockerfile'
+          Dockerfile: 'todo/Dockerfile'
           tags: $(Build.BuildId)
           buildContext: $(Build.SourcesDirectory)/todo
 
