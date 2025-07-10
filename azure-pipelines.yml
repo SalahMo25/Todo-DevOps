@@ -9,6 +9,10 @@ pool:
 
 variables:
   PYTHON_VERSION: '3.9'
+  dockerHubNamespace: 'salahmo25'
+  dockerRegistryServiceConection: 'dockerhub-service-con'
+  buildId: $(Build.BuildId)
+
 
 parameters:
     - name: environment
@@ -86,6 +90,25 @@ stages:
           cd todo
           python manage.py test todo.tests
         displayName: 'Install Deps & Run Unit Tests'
+
+
+  - job: build
+    dependsOn: [Lint,test]
+    displayName: Building
+    steps:
+      - checkout: self
+
+      -task:
+        - task: Docker@2
+          displayName: Build and Push
+          inputs:
+            containerRegistry: $(dockerRegistryServiceConection)
+            repository: $(dockerHubNamespace)/devops
+            command: 'buildAndPush'
+            Dockerfile: 'todo /Dockerfile'
+            tags: $(Build.BuildId)
+            buildContext: $(Build.SourcesDirectory)/todo
+
 
 
 
