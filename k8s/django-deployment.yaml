@@ -46,7 +46,7 @@ metadata:
   name: djangotodo-service
 spec:
   selector:
-    app: djangotodo
+    app: todo
   ports:
   - protocol: TCP
     port: 80
