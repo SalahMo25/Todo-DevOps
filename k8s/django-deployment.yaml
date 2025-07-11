@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: djangotodo
-        image: salahmo25/todo:latest
+        image: salahmo25/todo:${BUILD_BUILDID}
         ports:
         - containerPort: 8000
         env:
