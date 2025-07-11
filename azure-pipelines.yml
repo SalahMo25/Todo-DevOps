@@ -137,7 +137,7 @@ stages:
                 - task: AWSShellScript@1
                   displayName: 'Login to EKS Cluster'
                   inputs:
-                    awsCredentials: 'aws-eks-service-con  '   
+                    awsCredentials: 'aws-eks-service-con'   
                     regionName: 'us-east-1'
                     scriptType: 'inline'
                     inlineScript: |
