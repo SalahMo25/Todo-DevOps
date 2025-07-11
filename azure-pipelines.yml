@@ -124,3 +124,28 @@ stages:
             deploy:
                 steps:
                 - checkout: self
+                - task: ReplaceTokens@5
+                  inputs:
+                    rootDirectory: '$(Build.SourcesDirectory)/k8s'
+                    targetFiles: "**/*.yaml"
+                    tokenPattern: custom
+                    tokenPrefix: '${'
+                    tokenSuffix: '}'
+                    verbosity: detailed
+                    escapeType: json
+
+                - task: AWSShellScript@1
+                  displayName: 'Login to EKS Cluster'
+                  inputs:
+                    awsCredentials: 'aws-eks-service-con  '   
+                    regionName: 'us-east-1'
+                    scriptType: 'inline'
+                    inlineScript: |
+                      echo "Logging in to EKS cluster"
+                      aws eks update-kubeconfig \
+                        --region us-east-1 \
+                        --name eks-production-cluster
+
+                - script: |
+                    kubectl apply -f $(Build.SourcesDirectory)/k8s/ -n ${{ parameters.environment }}
+                  displayName: 'Deploy to EKS with kubectl'
