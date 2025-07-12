@@ -1,0 +1,99 @@
+- name: Get latest stable kubectl version
+  uri:
+    url: https://dl.k8s.io/release/stable.txt
+    return_content: true
+  register: stable_version
+
+- name: Set kubectl version fact
+  set_fact:
+    kubectl_version: "{{ stable_version.content | trim }}"
+
+- name: Download kubectl binary
+  get_url:
+    url: "https://dl.k8s.io/release/{{ kubectl_version }}/bin/linux/amd64/kubectl"
+    dest: /usr/local/bin/kubectl
+    mode: '0755'
+
+- name: Ensure kubectl is executable
+  file:
+    path: /usr/local/bin/kubectl
+    mode: '0755'
+    owner: root
+    group: root
+
+- name: Verify kubectl version
+  command: kubectl version --client=true
+  register: kubectl_version_output
+  changed_when: false
+
+- debug:
+    msg: "Installed kubectl version: {{ kubectl_version_output.stdout }}"
+
+
+
+
+
+
+
+
+
+- name: Download eksctl
+  get_url:
+    url: "{{ eksctl_url }}"
+    dest: /tmp/eksctl.tar.gz
+    mode: '0644'
+- name: Extract eksctl
+  unarchive:
+    src: /tmp/eksctl.tar.gz
+    dest: /tmp
+    remote_src: yes
+- name: Move eksctl to /usr/local/bin
+  copy:
+    src: /tmp/eksctl
+    dest: /usr/local/bin/eksctl
+    mode: '0755'
+    remote_src: yes
+- name: Remove tar.gz
+  file:
+    path: /tmp/eksctl.tar.gz
+    state: absent
+- name: Create EKS cluster config YAML on the EC2 agent
+  copy:
+    dest: /home/ubuntu/cluster-config.yaml
+    content: |
+      apiVersion: eksctl.io/v1alpha5
+      kind: ClusterConfig
+
+      metadata:
+        name: eks-production-cluster
+        region: us-east-1
+        version: "1.29"
+
+      vpc:
+        id: vpc-01a4e7d47891e82b7
+        subnets:
+          public:
+            us-east-1b:
+              id: subnet-092a49cac1ccd9500
+            us-east-1c:
+              id: subnet-0646a5b0d9e68c656
+            us-east-1d:
+              id: subnet-06c4ba3c2cf34a314
+
+      nodeGroups:
+        - name: public-nodes
+          instanceType: t3.medium
+          desiredCapacity: 2
+          minSize: 2
+          maxSize: 3
+          ssh:
+            allow: true
+            publicKeyName: agent
+          tags:
+            env: dev
+            owner: salah
+
+- name: Run eksctl to create EKS cluster
+  shell: eksctl create cluster -f /home/ubuntu/cluster-config.yaml
+  become: yes
+  become_user: ubuntu

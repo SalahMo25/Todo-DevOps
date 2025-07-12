@@ -1,0 +1,121 @@
+- name: Create Azure DevOps agent directory
+  file:
+    path: "{{ azdo_agent_dir }}"
+    state: directory
+    owner: ubuntu
+    group: ubuntu
+    mode: '0755'
+- name: Download Azure DevOps agent
+  get_url:
+    url: https://download.agent.dev.azure.com/agent/4.255.0/vsts-agent-linux-x64-4.255.0.tar.gz
+    dest: "{{ azdo_agent_dir }}/agent.tar.gz"
+    mode: '0644'
+- name: Extract Azure DevOps agent
+  unarchive:
+    src: "{{ azdo_agent_dir }}/agent.tar.gz"
+    dest: "{{ azdo_agent_dir }}"
+    remote_src: yes
+# Cleanup previous setup
+- name: Stop Azure DevOps agent service if running
+  shell: ./svc.sh stop || true
+  args:
+    chdir: "{{ azdo_agent_dir }}"
+  become: true
+  ignore_errors: true
+- name: Kill any run.sh background processes
+  shell: |
+    if pgrep -f run.sh; then
+      pkill -f run.sh
+      echo "Killed running agent"
+    else
+      echo "No agent was running"
+    fi
+  register: pkill_result
+  changed_when: "'Killed running agent' in pkill_result.stdout"
+  ignore_errors: true
+  become: true
+  become_user: ubuntu
+- name: Remove previous Azure DevOps agent configuration
+  shell: ./config.sh remove --unattended --auth pat --token {{ azdo_pat }} || true
+  args:
+    chdir: "{{ azdo_agent_dir }}"
+  become: false
+  ignore_errors: true
+  environment:
+    HOME: "/home/ubuntu"
+- name: Delete agent config folders
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+  - "{{ azdo_agent_dir }}/_diag"
+  - "{{ azdo_agent_dir }}/.agent"
+  - "{{ azdo_agent_dir }}/.credentials"
+  - "{{ azdo_agent_dir }}/.env"
+  become: true
+# Fresh config
+- name: Configure Azure DevOps agent
+  command: >
+    ./config.sh --unattended --url {{ azdo_url }} --auth pat --token {{ azdo_pat }} --pool {{ azdo_pool }} --agent {{ azdo_agent_name }}
+
+  args:
+    chdir: "{{ azdo_agent_dir }}"
+  environment:
+    HOME: "/home/ubuntu"
+  become: false
+- name: Remove old Azure DevOps agent service file if it exists
+  # Remove existing service unit file if exists
+
+  file:
+    path: "/etc/systemd/system/vsts.agent.salahorganization.my\\x2dagent.ec2\\x2dagent.service"
+    state: absent
+  become: true
+  ignore_errors: true
+- name: Reload systemd after removing old service
+  command: systemctl daemon-reexec
+  become: true
+# Install and start service
+- name: Install agent as a service
+  command: ./svc.sh install
+  args:
+    chdir: "{{ azdo_agent_dir }}"
+  become: true
+- name: Start agent service
+  command: ./svc.sh start
+  args:
+    chdir: "{{ azdo_agent_dir }}"
+  become: true
+- name: Change ownership of Azure DevOps agent directory
+  file:
+    path: "{{ azdo_agent_dir }}"
+    state: directory
+    recurse: yes
+    owner: ubuntu
+    group: ubuntu
+  become: true
+- name: Remove Azure DevOps agent archive
+  file:
+    path: "{{ azdo_agent_dir }}/agent.tar.gz"
+    state: absent
+# Optional: Configure AWS CLI for ubuntu user
+- name: Ensure AWS CLI is installed
+  become: true
+  apt:
+    name: awscli
+    state: present
+    update_cache: yes
+
+- name: Configure AWS CLI with admin's credentials (salah)
+  become: yes
+  become_user: ubuntu
+  shell: |
+    aws configure set aws_access_key_id {{ aws_access_key }}
+    aws configure set aws_secret_access_key {{ aws_secret_key }}
+    aws configure set region {{ aws_region }}
+    aws configure set output json
+  environment:
+    HOME: "/home/ubuntu"
+- name: Include install python task
+  include_tasks: install_python.yml
+  tags: install_python
+

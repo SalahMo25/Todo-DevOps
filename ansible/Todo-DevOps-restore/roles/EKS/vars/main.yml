@@ -1,0 +1,8 @@
+# vars file for EKS
+eksctl_url: "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_Linux_amd64.tar.gz"
+cluster_name: "eks-production-cluster"
+region: "us-east-1"
+k8s_version: "1.29"
+ssh_public_key: "agent"
+vpc_id: "vpc-01a4e7d47891e82b7"
+public_subnet_id: "subnet-006153dd765931ce9"

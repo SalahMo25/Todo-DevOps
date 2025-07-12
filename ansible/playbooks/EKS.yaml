@@ -1,0 +1,7 @@
+- name: pipeline eks provisioning and configuration
+  hosts: agent
+  become: true
+  vars_files:
+    - ../roles/EKS/vars/main.yml
+  roles:
+    - EKS

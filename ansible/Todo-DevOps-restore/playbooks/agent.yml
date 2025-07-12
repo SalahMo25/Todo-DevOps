@@ -1,0 +1,7 @@
+- name: pipeline agent configuration
+  hosts: agent
+  become: false
+  vars_files:
+    - ../roles/agent/vars/main.yml
+  roles:
+    - agent

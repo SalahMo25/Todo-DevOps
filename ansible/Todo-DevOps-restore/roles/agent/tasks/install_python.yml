@@ -1,0 +1,20 @@
+---
+- name: Add deadsnakes PPA
+  become: true
+  apt_repository:
+    repo: ppa:deadsnakes/ppa
+    state: present
+
+- name: Update apt cache
+  become: true
+  apt:
+    update_cache: yes
+
+- name: Install Python 3.9 and related packages
+  become: true
+  apt:
+    name:
+      - python3.9
+      - python3.9-venv
+      - python3.9-dev
+    state: present
